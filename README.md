@@ -29,6 +29,20 @@ export PATH=$VITASDK/bin:$PATH # add vitasdk tool to $PATH if you haven't alread
 ./install-all.sh
 ```
 
+### Mac (Apple Silicon using Docker)
+For users with Macs that have Apple Silicon chips (like the M1), you can use Docker to set up a development environment. Here's how to get started:
+
+```shell
+# build docker image
+docker build --platform=linux/amd64 -t vita/vitasdk .
+
+# run docker image. for ex vitasdk/samples
+docker run --platform=linux/amd64 -it --rm --name=vitasdk-build \     
+ --mount type=bind,source=${PWD},target=/mounted_vitasdk_samples \
+ vita/vitasdk \
+ bash
+```
+
 ### Windows (Bash on Ubuntu on Windows)
 
 Just follow the steps for Linux above. This is the recommended way to set up vdpm on Windows, however, it only works for Windows 10.
