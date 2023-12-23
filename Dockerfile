@@ -4,6 +4,8 @@ LABEL Description="Vita SDK Build Environment"
 SHELL ["/bin/bash", "-c"]
 
 ENV DEBIAN_FRONTEND=noninteractive
+ARG UNAME=vita
+ARG UID=1000
 
 RUN apt-get update && apt-get install -y \
     git \
@@ -18,10 +20,16 @@ RUN apt-get update && apt-get install -y \
     file \
     libarchive-tools
 
-RUN useradd --user-group --system --create-home --no-log-init --  vita
+
+RUN groupadd --system ${UNAME} --gid ${UID}
+RUN useradd --uid ${UID} --system --gid ${UNAME} --home-dir /home/${UNAME} --create-home --comment "Docker image user" ${UNAME}
+RUN chown -R ${UNAME}:${UNAME} /home/${UNAME}
+RUN usermod -aG sudo ${UNAME}
+RUN echo "${UNAME}  ALL=(ALL) ALL" | sudo tee /etc/sudoers.d/permissions
+RUN echo ${UNAME}:vita | chpasswd
+
 USER vita
 ENV HOME /home/vita
-
 
 FROM builder AS vitasdk-builder
 ENV VITASDK=/usr/local/vitasdk
